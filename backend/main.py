@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, Request
-from typing import Dict
+from typing import List
 
 app = FastAPI(
     title="FastAPI D'Hondt Seat Allocation",
@@ -35,19 +35,18 @@ async def calculate_seats(request: Request):
 
     if not isinstance(seats, int) or seats <= 0:
         raise HTTPException(status_code=400, detail="'seats' must be a positive integer")
-    if not isinstance(votes, dict) or not votes:
-        raise HTTPException(status_code=400, detail="'votes' must be a non-empty dictionary")
-    if not all(isinstance(v, int) and v >= 0 for v in votes.values()):
-        raise HTTPException(status_code=400, detail="All values in 'votes' must be non-negative integers")
+    if not isinstance(votes, list) or not votes:
+        raise HTTPException(status_code=400, detail="'votes' must be a non-empty list of integers")
+    if not all(isinstance(v, int) and v >= 0 for v in votes):
+        raise HTTPException(status_code=400, detail="All elements in 'votes' must be non-negative integers")
 
     results = calculate_dhondt(seats, votes)
     return {"results": results}
 
-
-def calculate_dhondt(seats: int, votes: Dict[str, int]) -> Dict[str, int]:
-    allocation = {key: 0 for key in votes}
+def calculate_dhondt(seats: int, votes: List[int]) -> List[int]:
+    allocation = [0] * len(votes)
     for _ in range(seats):
-        quotients = {key: votes[key] / (allocation[key] + 1) for key in votes}
-        winner = max(quotients, key=quotients.get)
+        quotients = [votes[i] / (allocation[i] + 1) for i in range(len(votes))]
+        winner = quotients.index(max(quotients))
         allocation[winner] += 1
     return allocation
