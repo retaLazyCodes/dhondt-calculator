@@ -10,6 +10,7 @@ python = "^3.11"
 uvicorn = "^0.30.5"
 fastapi = "^0.112.0"
 pydantic = "^2.8.2"
+pydantic-settings = "^2.4.0"
 
 
 [build-system]
