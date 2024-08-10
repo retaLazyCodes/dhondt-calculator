@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request
 from typing import List
+from schemas import ElectionRequest, ElectionResult
 
 app = FastAPI(
     title="FastAPI D'Hondt Seat Allocation",
@@ -20,28 +21,20 @@ def healthcheck():
     return {"status": "healthy"}
 
 
-@app.post("/calculate_seats")
-async def calculate_seats(request: Request):
-    try:
-        data = await request.json()
-    except Exception as e:
-        raise HTTPException(status_code=400, detail="Invalid given data")
+@app.post("/calculate_seats/", response_model=ElectionResult)
+async def calculate_seats(election_request: ElectionRequest):
+    seats = election_request.seats
+    votes = election_request.votes
     
-    if 'seats' not in data or 'votes' not in data:
-        raise HTTPException(status_code=400, detail="Missing 'seats' or 'votes' in request body")
-    
-    seats = data['seats']
-    votes = data['votes']
-
-    if not isinstance(seats, int) or seats <= 0:
-        raise HTTPException(status_code=400, detail="'seats' must be a positive integer")
-    if not isinstance(votes, list) or not votes:
-        raise HTTPException(status_code=400, detail="'votes' must be a non-empty list of integers")
+    if seats <= 0:
+        raise HTTPException(status_code=400, detail="Number of seats must be greater than zero")
+    if not votes:
+        raise HTTPException(status_code=400, detail="Votes cannot be empty")
     if not all(isinstance(v, int) and v >= 0 for v in votes):
         raise HTTPException(status_code=400, detail="All elements in 'votes' must be non-negative integers")
 
     results = calculate_dhondt(seats, votes)
-    return {"results": results}
+    return ElectionResult(results=results)
 
 def calculate_dhondt(seats: int, votes: List[int]) -> List[int]:
     allocation = [0] * len(votes)
