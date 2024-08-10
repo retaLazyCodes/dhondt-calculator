@@ -1,6 +1,6 @@
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException
 from typing import List
-from schemas import ElectionRequest, ElectionResult
+from app.schemas.election import ElectionRequest, ElectionResult
 
 app = FastAPI(
     title="FastAPI D'Hondt Seat Allocation",
