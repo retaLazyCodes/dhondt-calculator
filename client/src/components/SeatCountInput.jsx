@@ -1,5 +1,3 @@
-import React from 'react';
-
 function SeatCountInput({ value, onChange }) {
   return (
     <div className="grid gap-2">

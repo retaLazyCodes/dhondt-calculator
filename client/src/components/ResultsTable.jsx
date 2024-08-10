@@ -1,5 +1,3 @@
-import React from 'react';
-
 const ResultsTable = ({ results }) => {
   return (
     <div className="grid gap-4">
@@ -14,13 +12,21 @@ const ResultsTable = ({ results }) => {
             </tr>
           </thead>
           <tbody>
-            {results.map((item, i) => (
-              <tr key={i} className="border-b">
-                <td className="p-2">{item.name}</td>
-                <td className="p-2">{item.votes}</td>
-                <td className="p-2">{item.seats}</td>
+            {results.length > 0 ? (
+              results.map((item, i) => (
+                <tr key={i} className="border-b">
+                  <td className="p-2">{item.name}</td>
+                  <td className="p-2">{item.votes}</td>
+                  <td className="p-2">{item.seats}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="3" className="p-2 text-center text-gray-500">
+                  No hay resultados para mostrar
+                </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>

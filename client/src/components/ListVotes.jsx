@@ -1,11 +1,9 @@
-import React from 'react';
 import VotesItem from './VotesItem';
 
 function ListVotes({ 
   lists, 
   handleListsChange, 
   removeList,
-  disableVotesInput = false 
 }) {
   return (
     <div className="grid gap-2">
@@ -16,7 +14,6 @@ function ListVotes({
           index={i}
           handleListsChange={handleListsChange}
           removeList={removeList}
-          disableVotesInput={disableVotesInput}
         />
       ))}
     </div>
