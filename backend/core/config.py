@@ -14,7 +14,7 @@ class Config(BaseConfig):
     DEBUG: int = 1
     DEFAULT_LOCALE: str = "en_US"
     ENVIRONMENT: EnvironmentType = EnvironmentType.DEVELOPMENT
-    SQLITE_URL: str = "sqlite:///./test.db"
+    SQLALCHEMY_DATABASE_URL: str = "sqlite:///./test.db"
     RELEASE_VERSION: str = "0.1"
     SHOW_SQL_ALCHEMY_QUERIES: int = 0
 
