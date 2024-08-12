@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, JSON
 from core.database import Base
 from core.database.mixins import TimestampMixin
 
-class ElectionResult(Base, TimestampMixin):
+class Election(Base, TimestampMixin):
     __tablename__ = "election_results"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)

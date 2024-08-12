@@ -13,24 +13,25 @@ class BaseController(Generic[ModelType]):
         self.model_class = model
         self.repository = repository
 
-    def get(self, id_: int, join_: set[str] | None = None) -> ModelType:
-        """Returns the model instance matching the id."""
-
-        db_obj = self.repository.get(id_, join_)
-        if not db_obj:
-            raise NotFoundException(
-                f"{self.model_class.__tablename__.title()} with id: {id_} does not exist"
-            )
-
-        return db_obj
-
-    def get_multi(
-        self, skip: int = 0, limit: int = 100, join_: set[str] | None = None
+    def get_all(
+        self, skip: int = 0, limit: int = 100, order_: dict | None = None
     ) -> list[ModelType]:
-        """Returns a list of models based on pagination params."""
-        return self.repository.get_multi(skip, limit, join_)
+        """
+        Returns a list of records based on pagination params.
+
+        :param skip: The number of records to skip.
+        :param limit: The number of records to return.
+        :param order_: The order of the results. (e.g desc, asc).
+        :return: A list of records.
+        """
+        return self.repository.get_all(skip, limit, order_)
 
     def create(self, attributes: dict[str, Any]) -> ModelType:
-        """Creates a new Sqlalchemy Object"""
+        """
+        Creates a new Object in the DB.
+
+        :param attributes: The attributes to create the object with.
+        :return: The created object.
+        """
         return self.repository.create(attributes)
 

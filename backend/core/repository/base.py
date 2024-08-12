@@ -11,52 +11,83 @@ ModelType = TypeVar("ModelType", bound=Base) # type: ignore
 
 
 class BaseRepository(Generic[ModelType]):
-    def __init__(self, db: Session, model: Type[ModelType]):
+    """Base class for data repositories."""
+
+    def __init__(self, model: Type[ModelType], db: Session):
         self.db = db
         self.model_class: Type[ModelType] = model
 
     def create(self, attributes: dict[str, Any] = None) -> ModelType:
-        """Creates the model instance."""
+        """
+        Creates the model instance.
+
+        :param attributes: The attributes to create the model with.
+        :return: The created model instance.
+        """
         if not attributes:
             attributes = {}
 
         model = self.model_class(**attributes)
         self.db.add(model)
+        self.db.commit()
 
         return model
 
-    def get_multi(
-        self, skip: int = 0, limit: int = 100, join_: set[str] | None = None
+    def get_all(
+        self, skip: int = 0, limit: int = 100, order_: dict | None = None
     ) -> list[ModelType]:
-        """Returns a list of models based on pagination params."""
-        select = self._callable(join_)
-        select = select.offset(skip).limit(limit)
+        """
+        Returns a list of model instances.
 
-        return self._all(select)
+        :param skip: The number of records to skip.
+        :param limit: The number of record to return.
+        :param order_: The order of the results. (e.g desc, asc).
+        :return: A list of model instances.
+        """
+        query = self._query(order_)
+        query = query.offset(skip).limit(limit)
 
-    def _callable(
+        return self._all(query)
+
+    def _query(
         self,
-        join_: set[str] | None = None,
         order_: dict | None = None,
     ) -> Select:
-        """Returns a callable that can be used to query the model."""
-        select = sqla_select(self.model_class)
-        select = self._maybe_ordered(select, order_)
+        """
+        Returns a callable that can be used to query the model.
 
-        return select
+        :param join_: The joins to make.
+        :param order_: The order of the results. (e.g desc, asc)
+        :return: A callable that can be used to query the model.
+        """
+        query = sqla_select(self.model_class)
+        query = self._maybe_ordered(query, order_)
 
-    def _all(self, select: Select) -> list[ModelType]:
-        """Returns all results from the query."""
-        return self.db.scalars(select).all()
+        return query
 
-    def _maybe_ordered(self, select: Select, order_: dict | None = None) -> Select:
-        """Returns the query ordered by the given column."""
+    def _all(self, query: Select) -> list[ModelType]:
+        """
+        Returns all results from the query.
+
+        :param query: The query to execute.
+        :return: A list of model instances.
+        """
+        return self.db.scalars(query).all()
+
+    def _maybe_ordered(self, query: Select, order_: dict | None = None) -> Select:
+        """
+        Returns the query ordered by the given column.
+
+        :param query: The query to order.
+        :param order_: The order to make.
+        :return: The query ordered by the given column.
+        """
         if order_:
-            if order_["asc"]:
+            if order_.get("asc"):
                 for order in order_["asc"]:
-                    select = select.order_by(getattr(self.model_class, order).asc())
+                    query = query.order_by(getattr(self.model_class, order).asc())
             else:
                 for order in order_["desc"]:
-                    select = select.order_by(getattr(self.model_class, order).desc())
+                    query = query.order_by(getattr(self.model_class, order).desc())
 
-        return select
+        return query
