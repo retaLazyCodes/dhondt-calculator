@@ -1,6 +1,6 @@
 const HistoryTable = ({ history }) => {
   if (history.length === 0) return null;
-  
+
   return (
     <div className="grid gap-4">
       <h2 className="text-2xl font-bold">Historial de cálculos</h2>
@@ -18,19 +18,19 @@ const HistoryTable = ({ history }) => {
             {history.map((item, i) => (
               <tr key={i} className="border-b">
                 <td className="p-2">
-                  {item.lists.map((l, j) => (
-                    <div key={j}>{l.name}</div>
+                  {item.votes.map((votes, j) => (
+                    <div key={j}>Lista #{j + 1}</div>
                   ))}
                 </td>
                 <td className="p-2">
-                  {item.lists.map((l, j) => (
-                    <div key={j}>{l.votes}</div>
+                  {item.votes.map((votes, j) => (
+                    <div key={j}>{votes}</div>
                   ))}
                 </td>
                 <td className="p-2">{item.seats}</td>
                 <td className="p-2">
-                  {item.result.map((r, j) => (
-                    <div key={j}>{r.seats}</div>
+                  {item.results.map((seats, j) => (
+                    <div key={j}>{seats}</div>
                   ))}
                 </td>
               </tr>
