@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from api import router
 from core.exceptions import CustomException
@@ -17,6 +18,14 @@ def init_listeners(app_: FastAPI) -> None:
             content={"error_code": exc.error_code, "message": exc.message},
         )
 
+def make_middleware(app_: FastAPI) -> None:
+    app_.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 def create_app() -> FastAPI:
     app_ = FastAPI(
@@ -35,6 +44,7 @@ def create_app() -> FastAPI:
     )
     init_routers(app_=app_)
     init_listeners(app_=app_)
+    make_middleware(app_=app_)
     return app_
 
 
