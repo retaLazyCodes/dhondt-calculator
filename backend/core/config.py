@@ -1,5 +1,6 @@
 from enum import Enum
 from pydantic_settings import BaseSettings
+import os
 
 class EnvironmentType(str, Enum):
     DEVELOPMENT = "development"
@@ -14,7 +15,7 @@ class Config(BaseConfig):
     DEBUG: int = 1
     DEFAULT_LOCALE: str = "en_US"
     ENVIRONMENT: EnvironmentType = EnvironmentType.DEVELOPMENT
-    SQLALCHEMY_DATABASE_URL: str = "sqlite:///./test.db"
+    SQLALCHEMY_DATABASE_URL: str = os.getenv("DB_URL", "sqlite:///./test.db")
     RELEASE_VERSION: str = "0.1"
     SHOW_SQL_ALCHEMY_QUERIES: int = 0
 

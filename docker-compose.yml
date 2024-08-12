@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  # React service
+  client:
+    build:
+      context: ./client
+    ports:
+      - "3000:3000"  # Expose port 3000 for the React app
+    depends_on:
+      - backend
+    command: ["npm", "run", "preview"]
+
+  # FastAPI service
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"  # Expose port 8000 for the FastAPI app
+    volumes:
+      - ./backend:/app  # Mount the backend code for development
+    environment:
+      - DB_URL=sqlite:///./database.db  # Configure database URL
